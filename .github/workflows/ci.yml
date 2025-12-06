@@ -4,6 +4,11 @@ on:
     branches:
       - master
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "测试通过"
+
   build:
     runs-on: ubuntu-latest
 
