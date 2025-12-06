@@ -5,46 +5,44 @@ on:
       - master
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v6
+      - uses: actions/checkout@v6
 
-    - name: 安装 Node.js
-      uses: actions/setup-node@v6
-      with:
-        node-version: '24.11.1'
+      - name: 安装 Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24.11.1"
 
-    - name: 安装 pnpm
-      uses: pnpm/action-setup@v4
-      with:
-        version: 10
-		
-    - name: 安装依赖
-      run: pnpm install
+      - name: 安装 pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
 
-    - name: 构建项目
-      run: pnpm build
+      - name: 安装依赖
+        run: pnpm install
 
-    - name: 通过用 rsync+ssh 把 dist、Dockerfile、docker.sh、nginx.conf 四样东西一次性同步到云服务器。部署到服务器
-      uses: easingthemes/ssh-deploy@main
-      with:
+      - name: 构建项目
+        run: pnpm build
+
+      - name: 通过用 rsync+ssh 把 dist、Dockerfile、docker.sh、nginx.conf 四样东西一次性同步到云服务器。部署到服务器
+        uses: easingthemes/ssh-deploy@main
+        with:
           SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
-          ARGS: '-rlgoDzvc --delete'
-          SOURCE: 'dist Dockerfile docker.sh nginx.conf'
+          ARGS: "-rlgoDzvc --delete"
+          SOURCE: "dist Dockerfile docker.sh nginx.conf"
           REMOTE_HOST: ${{ secrets.SERVER_REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.SERVER_REMOTE_USER }}
           TARGET: ${{ secrets.SERVER_TARGET }}
           SCRIPT_BEFORE: ls
 
-    - name: 远程执行 docker.sh 脚本
-      uses: appleboy/ssh-action@v1
-      with:
+      - name: 远程执行 docker.sh 脚本
+        uses: appleboy/ssh-action@v1
+        with:
           host: ${{ secrets.SERVER_REMOTE_HOST }}
           username: ${{ secrets.SERVER_REMOTE_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             cd ${{ secrets.SERVER_TARGET }}
             sh docker.sh
-
