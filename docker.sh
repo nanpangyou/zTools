@@ -7,5 +7,5 @@ docker run -d \
 -p 80:80 \
 --name ztools-container \
 --restart on-failure:5 \
--v /home/home/nginx.conf:/etc/nginx/conf.d/default.conf \
+-v /data/repos/nginx.conf:/etc/nginx/conf.d/default.conf \
 ztools-container
